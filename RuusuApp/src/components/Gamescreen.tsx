@@ -1,67 +1,63 @@
-import { useEffect, useState } from "react";
 
-type Card = {
-  code: string;
-  image: string;
-  value: string;
-  suit: string;
-};
+import { useEffect, useState } from "react";
+import { useDeck } from "../hooks/useDeck";
+import "../styles/styles.css";
 
 export default function GameScreen() {
-  const [deckId, setDeckId] = useState(null);
-const [card, setCard] = useState<Card | null>(null);
-  const [remaining, setRemaining] = useState(52);
+  const { card, remaining, createDeck, drawCard } = useDeck();
 
-  const createDeck = async () => {
-    const res = await fetch(
-      "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1"
-    );
-    const data = await res.json();
-    setDeckId(data.deck_id);
-    setRemaining(data.remaining);
-    setCard(null);
-  };
-
-  const drawCard = async () => {
-    if (!deckId || remaining === 0) return;
-
-    const res = await fetch(
-      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-    );
-    const data = await res.json();
-
-    setCard(data.cards[0]);
-    setRemaining(data.remaining);
-  };
+  const [flipping, setFlipping] = useState(false);
+  const [displayCard, setDisplayCard] = useState<typeof card>(null);
 
   useEffect(() => {
     createDeck();
   }, []);
 
+  const handleDraw = async () => {
+    if (flipping) return;
+
+    setFlipping(true);
+
+
+    const res = await drawCard(); 
+    const nextCard = res;
+
+    setTimeout(() => {
+      setDisplayCard(nextCard);
+    }, 300);
+
+    setTimeout(() => {
+      setFlipping(false);
+    }, 600);
+  };
+
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>🃏 Card Drawer</h1>
+    <div className="container">
+      <h1>RUUSU 🌹</h1>
 
       {remaining > 0 ? (
-        <button onClick={drawCard}>
-          Draw Card
-        </button>
+        <button onClick={handleDraw}>Nosta Kortti</button>
       ) : (
-        <button onClick={createDeck}>
-          Generate New Deck
-        </button>
+        <button onClick={createDeck}>Uusi pakka</button>
       )}
 
-      <p>Cards remaining: {remaining}</p>
+      <p>Kortteja jäljellä: {remaining}</p>
 
-      {card && (
-        <div style={{ marginTop: "20px" }}>
-          <img src={card.image} alt={card.code} />
-          <p>
-            {card.value} of {card.suit}
-          </p>
+      <div className={`scene ${flipping ? "flip" : ""}`}>
+        <div className="card">
+          {/* FRONT */}
+          <div className="face front">
+            {displayCard ? (
+              <img src={displayCard.image} alt={displayCard.code} />
+            ) : (
+              <div className="back">🂠</div>
+            )}
+          </div>
+
+          {/* BACK */}
+          <div className="face back">🂠</div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
