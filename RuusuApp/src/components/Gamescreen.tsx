@@ -33,19 +33,12 @@ export default function GameScreen() {
 
   return (
     <div className="container">
-      <h1>RUUSU 🌹</h1>
+      <h1 className="mainheader">RUUSUPAKKA 🌹</h1>
 
-      {remaining > 0 ? (
-        <button onClick={handleDraw}>Nosta Kortti</button>
-      ) : (
-        <button onClick={createDeck}>Uusi pakka</button>
-      )}
-
-      <p>Kortteja jäljellä: {remaining}</p>
-
+     
       <div className={`scene ${flipping ? "flip" : ""}`}>
         <div className="card">
-          {/* FRONT */}
+          {}
           <div className="face front">
             {displayCard ? (
               <img src={displayCard.image} alt={displayCard.code} />
@@ -54,10 +47,18 @@ export default function GameScreen() {
             )}
           </div>
 
-          {/* BACK */}
+          {}
           <div className="face back">🂠</div>
         </div>
       </div>
+       {remaining > 0 ? (
+        <button className="button" onClick={handleDraw}>Nosta Kortti</button>
+      ) : (
+        <button className="button" onClick={createDeck}>Uusi pakka</button>
+      )}
+
+      <p>Kortteja jäljellä: {remaining}</p>
+
     </div>
   );
 }

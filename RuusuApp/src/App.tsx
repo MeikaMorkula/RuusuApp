@@ -1,5 +1,4 @@
 
-import './App.css'
 import GameScreen from './components/Gamescreen'
 
 function App() {
